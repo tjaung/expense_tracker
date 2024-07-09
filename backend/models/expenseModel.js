@@ -4,6 +4,10 @@ const Schema = mongoose.Schema;
 
 const expenseSchema = new Schema(
   {
+    user_id: {
+      type: String,
+      required: true,
+    },
     transactionName: {
       type: String,
       required: true,
@@ -12,8 +16,8 @@ const expenseSchema = new Schema(
       type: Number,
       required: true,
     },
-    transaction: {
-      type: Number,
+    transactionDate: {
+      type: Date,
       required: true,
     },
   },

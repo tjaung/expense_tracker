@@ -1,10 +1,13 @@
-const Eorkout = require("../models/expenseModel");
+const Expense = require("../models/expenseModel");
 const mongoose = require("mongoose");
 
 // get all expenses
 const getExpenses = async (req, res) => {
-  const expenses = await expense.find({}).sort({ createdAt: -1 });
+  const user_id = req.user._id;
 
+  const expenses = await Expense.find({ user_id }).sort({
+    createdAt: -1,
+  });
   res.status(200).json(expenses);
 };
 
@@ -16,7 +19,7 @@ const getExpense = async (req, res) => {
     return res.status(404).json({ error: "No such expense" });
   }
 
-  const expense = await expense.findById(id);
+  const expense = await Expense.findById(id);
 
   if (!expense) {
     return res.status(404).json({ error: "No such expense" });
@@ -27,18 +30,17 @@ const getExpense = async (req, res) => {
 
 // create new expense
 const createExpense = async (req, res) => {
-  const { title, load, reps } = req.body;
-
+  const { transactionName, transactionAmount, transactionDate } = req.body;
   let emptyFields = [];
 
-  if (!title) {
-    emptyFields.push("title");
+  if (!transactionName) {
+    emptyFields.push("transactionName");
   }
-  if (!load) {
-    emptyFields.push("load");
+  if (!transactionAmount) {
+    emptyFields.push("transactionAmount");
   }
-  if (!reps) {
-    emptyFields.push("reps");
+  if (!transactionDate) {
+    emptyFields.push("transactionDate");
   }
   if (emptyFields.length > 0) {
     return res
@@ -48,7 +50,14 @@ const createExpense = async (req, res) => {
 
   // add doc to db
   try {
-    const expense = await expense.create({ title, load, reps });
+    const user_id = req.user._id;
+
+    const expense = await Expense.create({
+      user_id,
+      transactionName,
+      transactionAmount,
+      transactionDate,
+    });
     res.status(200).json(expense);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -63,7 +72,7 @@ const deleteExpense = async (req, res) => {
     return res.status(404).json({ error: "No such expense" });
   }
 
-  const expense = await expense.findOneAndDelete({ _id: id });
+  const expense = await Expense.findOneAndDelete({ _id: id });
 
   if (!expense) {
     return res.status(400).json({ error: "No such expense" });
@@ -72,7 +81,7 @@ const deleteExpense = async (req, res) => {
   res.status(200).json(expense);
 };
 
-// update a expense
+// uptransactionDate a expense
 const updateExpense = async (req, res) => {
   const { id } = req.params;
 
@@ -80,7 +89,7 @@ const updateExpense = async (req, res) => {
     return res.status(404).json({ error: "No such expense" });
   }
 
-  const expense = await expense.findOneAndUpdate(
+  const expense = await Expense.findOneAndUpdate(
     { _id: id },
     {
       ...req.body,

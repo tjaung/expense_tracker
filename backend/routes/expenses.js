@@ -1,4 +1,5 @@
 const express = require("express");
+const requireAuth = require("../middleware/requireAuthentification");
 const {
   createExpense,
   getExpenses,
@@ -7,7 +8,12 @@ const {
   updateExpense,
 } = require("../controllers/expenseController");
 
+// ensure authentification is correct
+
 const router = express.Router();
+
+// before anything else ensure authentification
+router.use(requireAuth);
 
 // GET all Expenses
 router.get("/", getExpenses);

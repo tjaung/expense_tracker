@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useExpensesContext } from "../hooks/useExpensesContext";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 // components
 import ExpenseDetails from "../components/ExpenseDetails/ExpenseDetails";
@@ -7,19 +8,26 @@ import ExpenseForm from "../components/ExpenseForm/ExpenseForm";
 
 const Home = () => {
   const { expenses, dispatch } = useExpensesContext();
+  const { user } = useAuthContext();
 
   useEffect(() => {
     const fetchExpenses = async () => {
-      const response = await fetch("/expenses");
+      const response = await fetch("/api/expenses", {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
       const json = await response.json();
-
+      console.log("Fetched expenses:", json); // Check if expenses are being fetched
+      console.log(response);
       if (response.ok) {
-        dispatch({ type: "SET_EXPENSES", payload: json });
+        dispatch({ type: "SET_EXPENSES", PAYLOAD: json });
       }
     };
-
-    fetchExpenses();
-  }, [dispatch]);
+    if (user) {
+      fetchExpenses();
+    }
+  }, [dispatch, user]);
 
   return (
     <div className="home">

@@ -1,26 +1,34 @@
 import { useState } from "react";
 import { useExpensesContext } from "../../hooks/useExpensesContext";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 import "./expenseForm.css";
 
 const ExpenseForm = () => {
   const { dispatch } = useExpensesContext();
+  const { user } = useAuthContext();
 
-  const [title, setTitle] = useState("");
-  const [load, setLoad] = useState("");
-  const [reps, setReps] = useState("");
+  const [transactionName, setTransactionName] = useState("");
+  const [transactionAmount, setTransactionAmount] = useState("");
+  const [transactionDate, setTransactionDate] = useState("");
   const [error, setError] = useState(null);
   const [emptyFields, setEmptyFields] = useState([]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const expense = { title, load, reps };
+    if (!user) {
+      setError("You must be logged in");
+      return;
+    }
 
-    const response = await fetch("/expenses", {
+    const expense = { transactionName, transactionAmount, transactionDate };
+
+    const response = await fetch("/api/expenses", {
       method: "POST",
       body: JSON.stringify(expense),
       headers: {
+        Authorization: `Bearer ${user.token}`,
         "Content-Type": "application/json",
       },
     });
@@ -31,13 +39,13 @@ const ExpenseForm = () => {
       setEmptyFields(json.emptyFields);
     }
     if (response.ok) {
-      setTitle("");
-      setLoad("");
-      setReps("");
+      setTransactionName("");
+      setTransactionAmount("");
+      setTransactionDate("");
       setError(null);
       setEmptyFields([]);
       console.log("new Expense added", json);
-      dispatch({ type: "CREATE_EXPENSE", payload: json });
+      dispatch({ type: "CREATE_EXPENSE", PAYLOAD: json });
     }
   };
 
@@ -45,28 +53,28 @@ const ExpenseForm = () => {
     <form className="create" onSubmit={handleSubmit}>
       <h3>Add a New Expense</h3>
 
-      <label>Excersize Title:</label>
+      <label>Expense Name:</label>
       <input
         type="text"
-        onChange={(e) => setTitle(e.target.value)}
-        value={title}
-        className={emptyFields.includes("title") ? "error" : ""}
+        onChange={(e) => setTransactionName(e.target.value)}
+        value={transactionName}
+        // className={emptyFields.includes("transactionName") ? "error" : ""}
       />
 
-      <label>Load (in kg):</label>
+      <label>Amount:</label>
       <input
         type="number"
-        onChange={(e) => setLoad(e.target.value)}
-        value={load}
-        className={emptyFields.includes("load") ? "error" : ""}
+        onChange={(e) => setTransactionAmount(e.target.value)}
+        value={transactionAmount}
+        // className={emptyFields.includes("transactionAmount") ? "error" : ""}
       />
 
-      <label>Reps:</label>
+      <label>Date:</label>
       <input
-        type="number"
-        onChange={(e) => setReps(e.target.value)}
-        value={reps}
-        className={emptyFields.includes("reps") ? "error" : ""}
+        type="date"
+        onChange={(e) => setTransactionDate(e.target.value)}
+        value={transactionDate}
+        // className={emptyFields.includes("transactionDate") ? "error" : ""}
       />
 
       <button>Add Expense</button>

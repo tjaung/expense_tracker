@@ -13,7 +13,7 @@ input {
   box-sizing: border-box;
 }
 form button {
-  background: var(--primary);
+  background: var(--color-primary);
   border: 0;
   color: #fff;
   padding: 10px;
@@ -31,4 +31,11 @@ div.error {
 }
 input.error {
   border: 1px solid var(--error);
+}
+
+.transaction-name {
+}
+.transaction-amount {
+}
+.transaction-date {
 }

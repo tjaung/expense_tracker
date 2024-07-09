@@ -8,6 +8,7 @@
   --color-white: #fff;
   --color-light: rgba(255, 255, 255, 0.6);
 
+  --error: rgb(218, 111, 111);
   --container-width-lg: 75%;
   --container-width-md: 86%;
   --container-width-sm: 90%;

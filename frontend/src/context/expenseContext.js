@@ -4,17 +4,17 @@ export const ExpensesContext = createContext();
 
 export const expensesReducer = (state, action) => {
   switch (action.type) {
-    case "SET_EXPENSE":
+    case "SET_EXPENSES":
       return {
-        Expenses: action.payload,
+        expenses: action.PAYLOAD,
       };
     case "CREATE_EXPENSE":
       return {
-        Expenses: [action.payload, ...state.Expenses],
+        expenses: [action.PAYLOAD, ...state.expenses],
       };
     case "DELETE_EXPENSE":
       return {
-        Expenses: state.Expenses.filter((w) => w._id !== action.payload._id),
+        expenses: state.expenses.filter((w) => w._id !== action.PAYLOAD._id),
       };
     default:
       return state;
@@ -23,7 +23,7 @@ export const expensesReducer = (state, action) => {
 
 export const ExpensesContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(expensesReducer, {
-    Expenses: null,
+    expenses: [],
   });
 
   return (
