@@ -5,11 +5,10 @@ const mongoose = require("mongoose");
 
 const findSingleUser = async (req, res) => {
   const id  = req.user._id;
-  console.log('conrtroller level: ', req.user._id)
-  console.log
+  // console.log('conrtroller level: ', req.user._id)
   try{
     const user = await User.queryOneWithId(id);
-    console.log('find single user: ', user)
+    // console.log('find single user: ', user)
     if (!user) {
       return res.status(404).json({ error: "No such user" });
     }

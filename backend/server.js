@@ -146,18 +146,19 @@ app.post('/api/exchange_public_token', async function (
 // Fetches balance data using the Node client library for Plaid
 app.get("/api/transactions", async (req, res, next) => {
 
-  const access_token = req.body.access_token;
-  console.log(req.body)
+  const access_token = req.headers.access_token;
+  // console.log(req.headers)
   const startDate = moment().subtract(30, "days").format("YYYY-MM-DD");
   const endDate = moment().format("YYYY-MM-DD");
 
-  // const transactionResponse = await plaidClient.transactionsGet({
-  //   access_token: access_token,
-  //   start_date: startDate,
-  //   end_date: endDate,
-  //   options: { count: 10 },
-  // });
-  // res.json(transactionResponse.data);
+  const transactionResponse = await plaidClient.transactionsGet({
+    access_token: access_token,
+    start_date: startDate,
+    end_date: endDate,
+    options: { count: 10 },
+  });
+  console.log(transactionResponse.data)
+  res.json(transactionResponse.data);
 });
 
 

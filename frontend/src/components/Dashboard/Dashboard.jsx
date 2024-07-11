@@ -41,7 +41,6 @@ const Dashboard = ({ navigateTo, isConnected, setIsConnected }) => {
   }, []);
 
   const getTransactions = async () => {
-    try {
       // call for query of user to get access token then chain to transactions
       // console.log(`Bearer ${user.token}`)
       await fetch('/api/user/findById', {
@@ -60,29 +59,26 @@ const Dashboard = ({ navigateTo, isConnected, setIsConnected }) => {
         console.log('access key', jsonRes.plaidToken)
 
         return await fetch("/api/transactions", {
-          method: "POST",
-          body: JSON.stringify({'access_token': jsonRes.plaidToken})
+          method: "GET",
+          headers: {
+            'access_token': jsonRes.plaidToken
+          }
         })
       })
       .then(async (response) => {
         console.log(response)
+        const simplifiedData = response.transactions.map((item) => ({
+          date: item.date,
+          name: item.name,
+          amount: `$${item.amount.toFixed(2)}`,
+          categories: item.category.join(", "),
+        }));
+        console.table(simplifiedData);
+        return simplifiedData
       })
-
-
-      const response = await axios.get("/api/transactions");
-      const data = response.data;
-      const simplifiedData = data.transactions.map((item) => ({
-        date: item.date,
-        name: item.name,
-        amount: `$${item.amount.toFixed(2)}`,
-        categories: item.category.join(", "),
-      }));
-      console.table(simplifiedData);
-      //   setTransactions(simplifiedData);
-      return simplifiedData;
-    } catch (error) {
-      console.error(`We encountered an error: ${error}`);
-    }
+      .catch(err => {
+        console.error('Request failed', err)
+      })
   };
 
   return (
