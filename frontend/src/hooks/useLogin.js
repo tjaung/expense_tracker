@@ -9,21 +9,19 @@ export const useLogin = () => {
   const login = async (email, password) => {
     setIsLoading(true);
     setError(null);
-    console.log("login function");
-    // const response =
+
     await fetch("/api/user/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       Accept: "application/json",
       body: JSON.stringify({ email, password }),
     })
-      .then((response) => {
-        return response.json().then((jsonRes) => {
-          if (!response.ok) {
-            throw new Error(jsonRes.error);
-          }
-          return jsonRes;
-        });
+      .then(async (response) => {
+        const jsonRes = await response.json();
+        if (!response.ok) {
+          throw new Error(jsonRes.error);
+        }
+        return jsonRes;
       })
       .then((jsonRes) => {
         // Save token to local storage so user doesn't log out every time

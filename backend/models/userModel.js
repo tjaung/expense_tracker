@@ -14,9 +14,50 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  plaidToken: {
+    type: String
+  }
 });
 
 // Statics
+
+// query single user
+userSchema.statics.queryOneWithId = async function(_id) {
+  console.log('model level query with id: ', _id)
+  if(_id){
+    const filter = { _id };
+  
+    const user = await this.findOne(filter);
+    return user
+  }
+    else {
+    throw Error("Can't find user")
+  }
+}
+// get plaid token
+userSchema.statics.storePlaidToken = async function(_id, token) {
+  console.log('model level token: ', token.access_token)
+  if(token) {
+    const salt = await bcrypt.genSalt(15)
+    const hash = await bcrypt.hash(token.access_token, salt)
+
+    const userInitial = await this.findOne({_id})
+    console.log(userInitial)
+
+    const filter = { _id };
+    const update = { 'plaidToken': token.access_token };
+
+    const user = await this.findOneAndUpdate(filter, update, {
+      new: true
+    });
+
+    return user
+  }
+  else {
+    throw Error("Can't find token")
+  }
+  
+}
 
 // sign up
 userSchema.statics.signUp = async function (email, password) {
